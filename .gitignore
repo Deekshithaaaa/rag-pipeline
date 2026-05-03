@@ -3,3 +3,4 @@ venv/
 __pycache__/
 data/vectorstore/
 .DS_Store
+data/processed/embedded_chunks.json
