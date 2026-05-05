@@ -8,6 +8,8 @@
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
 ![Faithfulness](https://img.shields.io/badge/Faithfulness-97%25-brightgreen)
 
+🌐 **Live API:** https://rag-pipeline-production-737f.up.railway.app/docs
+
 ## 📌 What is this?
 
 An end-to-end RAG pipeline that ingests PDF research papers, converts them into semantic vector embeddings, and answers natural language questions using GPT-4 — with source citations.
