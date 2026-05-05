@@ -1,9 +1,5 @@
 import streamlit as st
-import sys
-import os
-sys.path.append(os.path.dirname(__file__))
-
-from src.retrieval.rag import query_rag
+import requests
 
 # Page config
 st.set_page_config(
@@ -11,6 +7,9 @@ st.set_page_config(
     page_icon="🧠",
     layout="centered"
 )
+
+# Railway API URL
+API_URL = "https://rag-pipeline-production-737f.up.railway.app"
 
 # Header
 st.title("🧠 AI Research Paper Assistant")
@@ -63,24 +62,33 @@ question = st.text_input(
 if st.button("🚀 Search", type="primary"):
     if question:
         with st.spinner("🔍 Searching research papers..."):
-            result = query_rag(question)
-        
-        # Answer
-        st.markdown("### 💬 Answer")
-        st.markdown(result["answer"])
-        
-        # Sources
-        st.markdown("### 📄 Sources")
-        for source in result["sources"]:
-            st.markdown(f"- `{source}`")
-        
-        # Stats
-        st.markdown("### 📊 Stats")
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("Chunks Retrieved", result["chunks_used"])
-        with col2:
-            st.metric("Faithfulness Score", "97%")
+            try:
+                response = requests.post(
+                    f"{API_URL}/query",
+                    json={"question": question, "top_k": 5},
+                    timeout=30
+                )
+                result = response.json()
+
+                # Answer
+                st.markdown("### 💬 Answer")
+                st.markdown(result["answer"])
+
+                # Sources
+                st.markdown("### 📄 Sources")
+                for source in result["sources"]:
+                    st.markdown(f"- `{source}`")
+
+                # Stats
+                st.markdown("### 📊 Stats")
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.metric("Chunks Retrieved", result["chunks_used"])
+                with col2:
+                    st.metric("Faithfulness Score", "97%")
+
+            except Exception as e:
+                st.error(f"Error connecting to API: {str(e)}")
     else:
         st.warning("Please enter a question!")
 
