@@ -9,6 +9,7 @@
 ![Faithfulness](https://img.shields.io/badge/Faithfulness-97%25-brightgreen)
 
 🌐 **Live API:** https://rag-pipeline-production-737f.up.railway.app/docs
+🎨 **Live Demo UI:** https://rag-paper-assistant-2026.streamlit.app
 
 ## 📌 What is this?
 
