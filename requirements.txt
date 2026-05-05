@@ -1,7 +1,12 @@
+fastapi
+uvicorn
 openai
 chromadb
 langchain-text-splitters
 python-dotenv
-streamlit
 pymupdf
 tiktoken
+streamlit
+requests
+ragas
+datasets
