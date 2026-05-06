@@ -52,8 +52,11 @@ Source: 1706_03762.pdf (Attention Is All You Need)
 | Metric | Score |
 |--------|-------|
 | Faithfulness | **80%** |
+| Answer Relevancy | **NaN*** |
 | Framework | RAGAs |
 | Test Questions | 25 |
+
+> *Answer Relevancy returned NaN due to a known compatibility issue between RAGAs and OpenAI embedding API versions. Faithfulness is the primary metric for RAG evaluation.
 
 ## 🛠️ Tech Stack
 
@@ -170,7 +173,7 @@ curl -X POST http://localhost:8000/query \
 - InstructGPT
 - ReAct
 - Chain of Thought Prompting
-- LLM Survey
+- A Survey of Large Language Models (Zhao et al., 2023)
 
 ## 🔍 Hybrid Search
 
