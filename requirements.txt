@@ -10,3 +10,4 @@ streamlit
 requests
 ragas
 datasets
+rank-bm25
