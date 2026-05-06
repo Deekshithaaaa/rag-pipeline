@@ -7,6 +7,7 @@
 ![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector_DB-orange)
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
 ![Faithfulness](https://img.shields.io/badge/Faithfulness-80%25-brightgreen)
+![HybridSearch](https://img.shields.io/badge/Search-Hybrid_BM25+Semantic-purple)
 
 🌐 **Live API:** https://rag-pipeline-production-737f.up.railway.app/docs
 🎨 **Live Demo UI:** https://rag-paper-assistant-2026.streamlit.app
@@ -26,13 +27,13 @@ Source: 1706_03762.pdf (Attention Is All You Need)
 ↓
 📝 Text Extraction (PyMuPDF)
 ↓
-✂️  Chunking (LangChain - 500 chars, 50 overlap)
+✂️ Chunking (LangChain - 500 chars, 50 overlap)
 ↓
 🔢 Embeddings (OpenAI text-embedding-3-small)
 ↓
-🗄️  Vector Store (ChromaDB - cosine similarity)
+🗄️ Vector Store (ChromaDB - cosine similarity)
 ↓
-🔍 Semantic Retrieval (top-k=5)
+🔀 Hybrid Search (BM25 + Semantic + RRF)
 ↓
 💬 Answer Generation (GPT-4o-mini)
 ↓
@@ -54,8 +55,10 @@ Source: 1706_03762.pdf (Attention Is All You Need)
 | Chunking | LangChain RecursiveCharacterTextSplitter |
 | Embeddings | OpenAI text-embedding-3-small |
 | Vector DB | ChromaDB |
+| Retrieval | Hybrid Search (BM25 + ChromaDB + RRF) |
 | LLM | GPT-4o-mini |
 | API | FastAPI + Uvicorn |
+| Frontend | Streamlit |
 | Evaluation | RAGAs |
 | Containerization | Docker + Docker Compose |
 
