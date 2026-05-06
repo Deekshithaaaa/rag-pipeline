@@ -10,34 +10,42 @@
 ![HybridSearch](https://img.shields.io/badge/Search-Hybrid_BM25+Semantic-purple)
 
 🌐 **Live API:** https://rag-pipeline-production-737f.up.railway.app/docs
+
 🎨 **Live Demo UI:** https://rag-paper-assistant-2026.streamlit.app
+
+---
 
 ## 📌 What is this?
 
 An end-to-end RAG pipeline that ingests PDF research papers, converts them into semantic vector embeddings, and answers natural language questions using GPT-4 — with source citations.
 
 **Example:**
+```
 Question: "What is the attention mechanism?"
-Answer: "The attention mechanism maps a query and key-value pairs
-to an output using weighted sums..."
+Answer: "The attention mechanism maps a query and key-value pairs 
+         to an output using weighted sums..."
 Source: 1706_03762.pdf (Attention Is All You Need)
+```
 
 ## 🏗️ Architecture
+
+```
 📄 PDF Documents
-↓
+      ↓
 📝 Text Extraction (PyMuPDF)
-↓
-✂️ Chunking (LangChain - 500 chars, 50 overlap)
-↓
+      ↓
+✂️  Chunking (LangChain - 500 chars, 50 overlap)
+      ↓
 🔢 Embeddings (OpenAI text-embedding-3-small)
-↓
-🗄️ Vector Store (ChromaDB - cosine similarity)
-↓
+      ↓
+🗄️  Vector Store (ChromaDB - cosine similarity)
+      ↓
 🔀 Hybrid Search (BM25 + Semantic + RRF)
-↓
+      ↓
 💬 Answer Generation (GPT-4o-mini)
-↓
+      ↓
 🌐 FastAPI REST API
+```
 
 ## 📊 Evaluation Results
 
@@ -63,6 +71,8 @@ Source: 1706_03762.pdf (Attention Is All You Need)
 | Containerization | Docker + Docker Compose |
 
 ## 📁 Project Structure
+
+```
 rag-pipeline/
 ├── data/
 │   ├── raw/          # Original PDF papers
@@ -71,12 +81,14 @@ rag-pipeline/
 ├── src/
 │   ├── ingestion/    # PDF loading & cleaning
 │   ├── embeddings/   # Embedding & vector store
-│   ├── retrieval/    # RAG query engine
+│   ├── retrieval/    # RAG + Hybrid search engine
 │   └── api/          # FastAPI backend
 ├── tests/            # RAGAs evaluation
+├── app.py            # Streamlit frontend
 ├── Dockerfile
 ├── docker-compose.yml
 └── requirements.txt
+```
 
 ## 🚀 Getting Started
 
@@ -120,6 +132,12 @@ uvicorn src.api.main:app --reload
 docker-compose up --build
 ```
 
+### Streamlit UI
+
+```bash
+python -m streamlit run app.py
+```
+
 ### API Usage
 
 Visit `http://localhost:8000/docs` for interactive documentation.
@@ -146,20 +164,29 @@ curl -X POST http://localhost:8000/query \
 - Attention Is All You Need (Transformers)
 - RAG — Retrieval Augmented Generation
 - GPT-4 Technical Report
-- LLaMA & LLaMA 2
+- LLaMA
+- LLaMA 2
 - LoRA
 - InstructGPT
 - ReAct
 - Chain of Thought Prompting
 - LLM Survey
 
+## 🔍 Hybrid Search
+
+This pipeline uses **Hybrid Search** combining:
+- **Semantic Search** — finds conceptually similar content using embeddings
+- **BM25 Keyword Search** — finds exact keyword matches
+- **Reciprocal Rank Fusion (RRF)** — merges both result sets intelligently
+
+This gives better retrieval than pure semantic search alone.
+
 ## 🔮 Future Improvements
-- Add hybrid search (semantic + BM25 keyword)
 - Implement re-ranking with cross-encoders
 - Add streaming responses
 - Support more document formats (Word, HTML)
-- Build a Streamlit frontend
+- Add conversation memory for multi-turn Q&A
 
 ## 👩‍💻 Author
-**Deekshitha Adishesha Raje Urs**  
-[GitHub](https://github.com/Deekshithaaaa)
+**Deekshitha Adishesha Raje Urs**
+[GitHub](https://github.com/Deekshithaaaa) | [LinkedIn](#)
