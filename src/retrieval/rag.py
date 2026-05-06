@@ -1,9 +1,19 @@
 from openai import OpenAI
 from dotenv import load_dotenv
-from src.retrieval.retriever import retrieve, get_collection
+import chromadb
+import json
+from src.retrieval.hybrid_retriever import (
+    hybrid_retrieve, build_bm25_index, load_chunks
+)
 
 load_dotenv()
 client = OpenAI()
+
+# Initialize once
+db = chromadb.PersistentClient(path="data/vectorstore")
+collection = db.get_collection("rag_docs")
+chunks = load_chunks()
+bm25 = build_bm25_index(chunks)
 
 def build_prompt(query: str, context_chunks: list[dict]) -> str:
     context = "\n\n---\n\n".join([c["content"] for c in context_chunks])
@@ -18,9 +28,8 @@ Question: {query}
 Answer:"""
 
 def query_rag(question: str, top_k=5) -> dict:
-    collection = get_collection()
-    chunks = retrieve(question, collection, top_k)
-    prompt = build_prompt(question, chunks)
+    chunks_result = hybrid_retrieve(question, collection, chunks, bm25, top_k)
+    prompt = build_prompt(question, chunks_result)
     
     response = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -30,8 +39,8 @@ def query_rag(question: str, top_k=5) -> dict:
     
     return {
         "answer": response.choices[0].message.content,
-        "sources": list(set([c["source"] for c in chunks])),
-        "chunks_used": len(chunks)
+        "sources": list(set([c["source"] for c in chunks_result])),
+        "chunks_used": len(chunks_result)
     }
 
 if __name__ == "__main__":
@@ -47,5 +56,4 @@ if __name__ == "__main__":
         result = query_rag(question)
         print(f"💬 Answer: {result['answer']}")
         print(f"📄 Sources: {result['sources']}")
-        print(f"🔢 Chunks used: {result['chunks_used']}")
         print("=" * 50)
