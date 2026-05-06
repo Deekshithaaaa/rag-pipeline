@@ -6,7 +6,7 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green)
 ![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector_DB-orange)
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
-![Faithfulness](https://img.shields.io/badge/Faithfulness-97%25-brightgreen)
+![Faithfulness](https://img.shields.io/badge/Faithfulness-80%25-brightgreen)
 
 🌐 **Live API:** https://rag-pipeline-production-737f.up.railway.app/docs
 🎨 **Live Demo UI:** https://rag-paper-assistant-2026.streamlit.app
@@ -42,9 +42,9 @@ Source: 1706_03762.pdf (Attention Is All You Need)
 
 | Metric | Score |
 |--------|-------|
-| Faithfulness | **97%** |
+| Faithfulness | **80%** |
 | Framework | RAGAs |
-| Test Questions | 5 |
+| Test Questions | 25 |
 
 ## 🛠️ Tech Stack
 
