@@ -33,7 +33,7 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("**Model:** GPT-4o-mini")
     st.markdown("**Vector DB:** ChromaDB")
-    st.markdown("**Faithfulness:** 97%")
+    st.markdown("**Faithfulness:** 79%")
 
 # Sample questions
 st.markdown("### 💡 Try these questions:")
@@ -85,7 +85,7 @@ if st.button("🚀 Search", type="primary"):
                 with col1:
                     st.metric("Chunks Retrieved", result["chunks_used"])
                 with col2:
-                    st.metric("Faithfulness Score", "97%")
+                    st.metric("Faithfulness Score", "79%")
 
             except Exception as e:
                 st.error(f"Error connecting to API: {str(e)}")
