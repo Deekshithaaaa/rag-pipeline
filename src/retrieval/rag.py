@@ -1,59 +1,50 @@
 from openai import OpenAI
 from dotenv import load_dotenv
-import chromadb
-import json
-from src.retrieval.hybrid_retriever import (
-    hybrid_retrieve, build_bm25_index, load_chunks
-)
+from src.retrieval.retriever import retrieve, get_collection
 
 load_dotenv()
 client = OpenAI()
-
-# Initialize once
-db = chromadb.PersistentClient(path="data/vectorstore")
-collection = db.get_collection("rag_docs")
-chunks = load_chunks()
-bm25 = build_bm25_index(chunks)
+collection = get_collection()
 
 def build_prompt(query: str, context_chunks: list[dict]) -> str:
     context = "\n\n---\n\n".join([c["content"] for c in context_chunks])
-    return f"""You are a helpful AI assistant. Use ONLY the context below to answer the question.
-If the answer is not in the context, say "I don't have enough information to answer this."
+    return f"""You are a precise research assistant answering questions about AI research papers.
+
+STRICT RULES:
+- Answer using ONLY the context provided below
+- Do NOT use any outside knowledge or training data
+- If the answer is not in the context, respond exactly: "I cannot find this in the provided papers."
+- Be specific and cite which paper the information comes from
+- Keep answers concise and factual
 
 Context:
 {context}
 
 Question: {query}
 
-Answer:"""
+Answer based strictly on the context above:"""
 
 def query_rag(question: str, top_k=5) -> dict:
-    chunks_result = hybrid_retrieve(question, collection, chunks, bm25, top_k)
-    prompt = build_prompt(question, chunks_result)
+    chunks = retrieve(question, collection, top_k)
+    prompt = build_prompt(question, chunks)
     
     response = client.chat.completions.create(
         model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a strict research assistant. You ONLY answer from provided context. You NEVER use outside knowledge. If context doesn't contain the answer, say 'I cannot find this in the provided papers.' No exceptions."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
         temperature=0
     )
     
     return {
         "answer": response.choices[0].message.content,
-        "sources": list(set([c["source"] for c in chunks_result])),
-        "chunks_used": len(chunks_result)
+        "sources": list(set([c["source"] for c in chunks])),
+        "chunks_used": len(chunks)
     }
-
-if __name__ == "__main__":
-    questions = [
-        "What is the attention mechanism?",
-        "What is LoRA and how does it work?",
-        "What is chain of thought prompting?"
-    ]
-    
-    for question in questions:
-        print(f"\n❓ Question: {question}")
-        print("-" * 50)
-        result = query_rag(question)
-        print(f"💬 Answer: {result['answer']}")
-        print(f"📄 Sources: {result['sources']}")
-        print("=" * 50)

@@ -49,24 +49,24 @@ def bm25_search(query: str, chunks: list[dict], bm25, top_k=10) -> list[dict]:
         for i in top_indices
     ]
 
-def reciprocal_rank_fusion(semantic_results: list[dict], bm25_results: list[dict], k=60) -> list[dict]:
+def reciprocal_rank_fusion(semantic_results: list[dict], bm25_results: list[dict], k=20, semantic_weight=0.8, bm25_weight=0.2) -> list[dict]:
     scores = {}
     docs = {}
 
     for rank, doc in enumerate(semantic_results):
         cid = doc["chunk_id"]
-        scores[cid] = scores.get(cid, 0) + 1 / (k + rank + 1)
+        scores[cid] = scores.get(cid, 0) + semantic_weight * (1 / (k + rank + 1))
         docs[cid] = doc
 
     for rank, doc in enumerate(bm25_results):
         cid = doc["chunk_id"]
-        scores[cid] = scores.get(cid, 0) + 1 / (k + rank + 1)
+        scores[cid] = scores.get(cid, 0) + bm25_weight * (1 / (k + rank + 1))
         docs[cid] = doc
 
     ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
     return [docs[cid] for cid, _ in ranked]
 
-def hybrid_retrieve(query: str, collection, chunks: list[dict], bm25, top_k=5) -> list[dict]:
+def hybrid_retrieve(query: str, collection, chunks: list[dict], bm25, top_k=8) -> list[dict]:
     semantic_results = semantic_search(query, collection, top_k=10)
     bm25_results = bm25_search(query, chunks, bm25, top_k=10)
     fused = reciprocal_rank_fusion(semantic_results, bm25_results)

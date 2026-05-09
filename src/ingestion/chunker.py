@@ -1,7 +1,7 @@
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 import json
 
-def chunk_documents(docs: list[dict], chunk_size=500, chunk_overlap=50) -> list[dict]:
+def chunk_documents(docs: list[dict], chunk_size=800, chunk_overlap=150) -> list[dict]:
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,

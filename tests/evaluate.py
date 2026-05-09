@@ -3,9 +3,13 @@ from ragas import evaluate
 from datasets import Dataset
 from src.retrieval.rag import query_rag
 from src.retrieval.retriever import retrieve, get_collection
+from langchain_openai import OpenAIEmbeddings
 import json
 
-# 25 test questions covering all 10 papers
+# Fix Answer Relevancy NaN issue
+answer_relevancy = AnswerRelevancy()
+answer_relevancy.embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+
 test_questions = [
     # Transformers / Attention
     "What is the attention mechanism in transformers?",
@@ -80,21 +84,24 @@ def run_evaluation():
         "contexts": contexts,
     })
     
-    metrics = [Faithfulness(), AnswerRelevancy()]
+    metrics = [Faithfulness(), answer_relevancy]
     result = evaluate(dataset, metrics=metrics)
     
     df = result.to_pandas()
     
     faith_score = df['faithfulness'].mean()
+    relevancy_score = df['answer_relevancy'].mean()
     
     print("\nEVALUATION RESULTS:")
     print("=" * 40)
     print(f"Faithfulness:     {faith_score:.2%}")
+    print(f"Answer Relevancy: {relevancy_score:.2%}")
     print(f"Test Questions:   {len(test_questions)}")
     print("=" * 40)
     
     scores = {
         "faithfulness": float(faith_score),
+        "answer_relevancy": float(relevancy_score),
         "num_questions": len(test_questions)
     }
     
