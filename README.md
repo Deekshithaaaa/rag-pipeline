@@ -6,7 +6,7 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green)
 ![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector_DB-orange)
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
-![Faithfulness](https://img.shields.io/badge/Faithfulness-80%25-brightgreen)
+![Faithfulness](https://img.shields.io/badge/Faithfulness-79%25-brightgreen)
 ![HybridSearch](https://img.shields.io/badge/Search-Hybrid_BM25+Semantic-purple)
 
 🌐 **Live API:** https://rag-pipeline-production-737f.up.railway.app/docs
@@ -34,7 +34,7 @@ Source: 1706_03762.pdf (Attention Is All You Need)
       ↓
 📝 Text Extraction (PyMuPDF)
       ↓
-✂️  Chunking (LangChain - 500 chars, 50 overlap)
+✂️  Chunking (LangChain - 800 chars, 150 overlap)
       ↓
 🔢 Embeddings (OpenAI text-embedding-3-small)
       ↓
@@ -51,12 +51,10 @@ Source: 1706_03762.pdf (Attention Is All You Need)
 
 | Metric | Score |
 |--------|-------|
-| Faithfulness | **80%** |
-| Answer Relevancy | **NaN*** |
+| Faithfulness | **79%** |
+| Answer Relevancy | **71%** |
 | Framework | RAGAs |
 | Test Questions | 25 |
-
-> *Answer Relevancy returned NaN due to a known compatibility issue between RAGAs and OpenAI embedding API versions. Faithfulness is the primary metric for RAG evaluation.
 
 ## 🛠️ Tech Stack
 
@@ -78,16 +76,17 @@ Source: 1706_03762.pdf (Attention Is All You Need)
 ```
 rag-pipeline/
 ├── data/
-│   ├── raw/          # Original PDF papers
-│   ├── processed/    # Cleaned text, chunks
-│   └── vectorstore/  # ChromaDB persistent store
+│   ├── raw/              # Original PDF papers
+│   ├── processed/        # Cleaned text, chunks
+│   └── vectorstore/      # ChromaDB persistent store
 ├── src/
-│   ├── ingestion/    # PDF loading & cleaning
-│   ├── embeddings/   # Embedding & vector store
-│   ├── retrieval/    # RAG + Hybrid search engine
-│   └── api/          # FastAPI backend
-├── tests/            # RAGAs evaluation
-├── app.py            # Streamlit frontend
+│   ├── ingestion/        # PDF loading & cleaning
+│   ├── embeddings/       # Embedding & vector store
+│   ├── retrieval/        # RAG + Hybrid search engine
+│   └── api/              # FastAPI backend
+├── tests/                # RAGAs evaluation
+├── app.py                # Streamlit frontend
+├── startup.py            # Auto-setup on deployment
 ├── Dockerfile
 ├── docker-compose.yml
 └── requirements.txt
@@ -183,6 +182,17 @@ This pipeline uses **Hybrid Search** combining:
 - **Reciprocal Rank Fusion (RRF)** — merges both result sets intelligently
 
 This gives better retrieval than pure semantic search alone.
+
+## 📈 Evaluation Journey
+
+| Version | Faithfulness | What Changed |
+|---|---|---|
+| v1 (5 questions) | 97% | Small sample |
+| v2 (25 questions) | 80% | More questions |
+| v3 (hybrid search) | 58% | Hybrid added |
+| v4 (tuned RRF) | 63% | Better weights |
+| v5 (bigger chunks) | 67% | Chunk size 800 |
+| v6 (strict prompt) | **79%** | System message |
 
 ## 🔮 Future Improvements
 - Implement re-ranking with cross-encoders
